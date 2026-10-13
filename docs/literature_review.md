@@ -1,4 +1,8 @@
-References
+# Literature Review
+
+## Overview
+This section reviews state-of-the-art approaches in phishing detection, feature extraction (URL & DOM), and Explainable AI (XAI) applied to cybersecurity.
+
 Desolda, G., Aneke, J., Ardito, C., Lanzilotti, R., & Costabile, M. F. (2023). Explanations in warning
 dialogs to help users defend against phishing attacks. International Journal of Human-Computer Studies,
 176, 103056. https://doi.org/10.1016/j.ijhcs.2023.103056
