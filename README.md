@@ -1,4 +1,5 @@
 # phishing-detector-extension
+- **YouTrack Project:** [Link to YouTrack]https://inayatulla.youtrack.cloud/projects/PHISH/issues
 
 # Project Proposal: Phishing Indicator Detector with Explainable Results
 
