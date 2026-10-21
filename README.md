@@ -1,11 +1,11 @@
 # phishing-detector-extension
-- **YouTrack Project:** [Link to YouTrack]https://inayatulla.youtrack.cloud/projects/PHISH/issues
+- **YouTrack Project:** https://inayatulla.youtrack.cloud/projects/PHISH/issues
 
 # Project Proposal: Phishing Indicator Detector with Explainable Results
 
 - **Project Title:** Development of a Browser Extension for Detecting Phishing Indicators with Explainable Results
 - **Team Members:** Inayatulla Noyan & Nurtilek Koblandy 
-- **Supervisor:** Aitynbek Seitenov
+- **Supervisor:** Altynbek Seitenov
 
 ## Problem Statement
 Phishing attacks continue to evolve rapidly, employing sophisticated tactics such as typosquatting, IDN homograph attacks, and dynamic malicious DOM forms. Current browser-based security mechanisms largely operate as black boxes, providing vague alerts or blocking pages without clear explanations. Consequently, users experience alert fatigue, lack contextual understanding, and frequently bypass critical security warnings.
