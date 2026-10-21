@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <span class="badge warning">HIGH RISK (85%)</span>
+      <h3>Phishing Detected</h3>
+    </div>
+    <p class="summary">This page displays indicators commonly associated with credential harvesting.</p>
+    
+    <div class="indicators">
+      <h4>Identified Indicators (Explainability):</h4>
+      <ul>
+        <li><strong>Domain Mismatch:</strong> Form posts to an external IP address.</li>
+        <li><strong>Typosquatting:</strong> Subtle character substitution detected in URL.</li>
+        <li><strong>Hidden Inputs:</strong> Concealed iframe overlay on login button.</li>
+      </ul>
+    </div>
+
+    <div class="actions">
+      <button class="btn danger">Leave Site</button>
+      <button class="btn secondary">Trust Domain</button>
+    </div>
+  </div>
+</body>
+</html>
