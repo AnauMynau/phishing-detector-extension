@@ -1,29 +1,41 @@
-# phishing-detector-extension
-- **YouTrack Project:** [Link to YouTrack]https://inayatulla.youtrack.cloud/projects/PHISH/issues
+# Hybrid Edge AI for Explainable Phishing Detection
 
-# Project Proposal: Phishing Indicator Detector with Explainable Results
+## 1. Project Overview
+**Problem:** Modern browser warnings act as "black boxes." Generic risk labels cause alert fatigue, leaving users unsure why a page is blocked, which increases false suspicion and unsafe bypassing.
+**Target Users:** Adult undergraduate students using desktop Chrome.
+**Expected Outcomes:** 
+1. An auditable, locally running browser extension prototype.
+2. A measured estimate of how deterministic explanations affect human webpage classification decisions (Participant Balanced Accuracy).
 
-- **Project Title:** Development of a Browser Extension for Detecting Phishing Indicators with Explainable Results
-- **Team Members:** Inayatulla Noyan & Nurtilek Koblandy 
-- **Supervisor:** Aitynbek Seitenov
+## 2. Team and Organization
+*   **Team Members:** Inayatulla Noyan & Nurtilek Koblandy
+*   **Roles:** 
+    *   *Inayatulla:* Literature review, user needs, UI/UX, dataset curation, and model training.
+    *   *Nurtilek:* Requirements, architecture, metadata collector, rules engine, and LLM integration.
+*   **Supervisor:** Altynbek Seitenov
+*   **Project Tracker (YouTrack):** [PHISH Board](https://inayatulla.youtrack.cloud/projects/PHISH)
 
-## Problem Statement
-Phishing attacks continue to evolve rapidly, employing sophisticated tactics such as typosquatting, IDN homograph attacks, and dynamic malicious DOM forms. Current browser-based security mechanisms largely operate as black boxes, providing vague alerts or blocking pages without clear explanations. Consequently, users experience alert fatigue, lack contextual understanding, and frequently bypass critical security warnings.
+## 3. Project Scope and Architecture
+This project utilizes a **Hybrid Edge AI** architecture ensuring **Zero-Data Leakage**.
 
-## Target Audience
-Everyday internet users and enterprise employees susceptible to social engineering, as well as security practitioners requiring rapid, explainable verification of suspicious web resources.
+<img src="docs/architecture/user_journey.jpg" alt="User Journey Flow" width="850">
 
-## Aim & Objectives
-The primary aim is to develop a lightweight Chromium browser extension capable of detecting phishing indicators in real-time and presenting interpretable, explainable evidence to empower informed user decisions.
+*   **In Scope:** Desktop Chrome execution (MV3), bounded on-demand active-tab scanning, offline-trained Random Forest classifier, and local WebLLM/WebGPU explanation generation.
+*   **Out of Scope:** Continuous background monitoring, remote inference backends, third-party phishing APIs, and automatic credential interception.
 
-**Key Objectives:**
-1. Investigate and identify robust URL, DOM, and network indicators indicative of phishing vectors.
-2. Design and evaluate a lightweight classification pipeline (heuristic-driven or machine learning model) to calculate threat risk scores.
-3. Integrate an Explainable AI (XAI) module to generate intuitive, user-friendly rationales detailing specific risk factors.
-4. Implement a responsive client-side browser extension utilizing Manifest V3 with minimal latency overhead.
-5. Empirically evaluate detection accuracy, inference speed, and explainability clarity using benchmark phishing datasets.
+## 4. Technology Choices
+*   **Offline Research & Model Build:** Python, scikit-learn (Random Forest), pandas.
+*   **Browser Runtime:** TypeScript / JavaScript, Chrome Manifest V3 API.
+*   **Local XAI Engine:** Tree JSON Inference, WebLLM / WebGPU (for explanation verbalization).
 
-## Scope & Engineering Complexity
-- **In Scope:** URL entropy and structural lexical analysis, DOM inspection (password inputs, iframe cloaking, external form actions), client-side/hybrid inference, and interactive UI explanation panels.
-- **Out of Scope:** Deep binary payload analysis of downloadable files and host-level traffic interception outside browser scope.
-- **Engineering Complexity:** Navigating Manifest V3 service-worker constraints, optimizing real-time DOM parsing latency (<250 ms), and translating complex classification weights into transparent, non-technical explanations.
+## 5. Current Status & Documentation
+**Status:** Pre-Defense 1 Stage (Architecture, Requirements, and Evaluation Plan Frozen).
+
+**Primary Documentation:**
+*   [Master Pre-Defense Report (PDF)](docs/Hybrid_Edge_AI_Predefense_Report.pdf)
+*   [Architecture Diagrams](docs/architecture/)
+*   [User Interview Records](docs/user_interviews.md)
+*   [Archive of Superseded Rules-Only Documents](docs/archive/)
+
+---
+*Note: This repository contains the source code and documentation for the Hybrid Edge AI proposal. Large artifacts (datasets, trained model weights) are managed externally during the research phase.*
