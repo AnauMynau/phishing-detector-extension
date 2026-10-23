@@ -12,7 +12,7 @@
 -   **Roles:** 
     *   *Inayatulla:* Literature review, user needs, UI/UX, dataset curation, and model training.
     *   *Nurtilek:* Requirements, architecture, metadata collector, rules engine, and LLM integration.
--   **Supervisor:** Aitynbek Seitenov
+-   **Supervisor:** Altynbek Seitenov
 -   **Project Tracker (YouTrack):** [PHISH Board](https://inayatulla.youtrack.cloud/projects/PHISH)
 
 ## 3. Project Scope and Architecture
