@@ -32,7 +32,7 @@ This project utilizes a **Hybrid Edge AI** architecture ensuring **Zero-Data Lea
 **Status:** Pre-Defense 1 Stage (Architecture, Requirements, and Evaluation Plan Frozen).
 
 **Primary Documentation:**
--   [Master Pre-Defense Report (PDF)](docs/Hybrid_Edge_AI_Predefense_Report.pdf)
+-   [Master Pre-Defense Report (PDF)](docs/SE2423_Noyan&Koblandy_ProbPeriod1)
 -   [Architecture Diagrams](docs/architecture/)
 -   [User Interview Records](docs/user_interviews.md)
 -   [Archive of Superseded Rules-Only Documents](docs/archive/)
