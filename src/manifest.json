@@ -1,18 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Explainable Phishing Detector",
+  "name": "Explainable Phishing Indicator Detector (v0.1.0)",
   "version": "0.1.0",
-  "description": "Browser extension for detecting phishing indicators with transparent explanations.",
-  "permissions": [
-    "activeTab",
-    "storage",
-    "scripting"
-  ],
+  "description": "Local rule-based phishing indicator scanner with E and L display modes.",
+  "permissions": ["activeTab", "scripting"],
   "action": {
-    "default_popup": "popup.html",
-    "default_title": "Check Page Safety"
-  },
-  "background": {
-    "service_worker": "background.js"
+    "default_popup": "popup.html"
   }
 }

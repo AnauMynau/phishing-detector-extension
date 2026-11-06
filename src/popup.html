@@ -2,29 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="popup.css">
+  <style>
+    body { width: 380px; font-family: system-ui, sans-serif; margin: 0; padding: 14px; background: #f8fafc; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
+    select, button { padding: 6px 10px; font-size: 13px; border-radius: 5px; border: 1px solid #cbd5e1; }
+    button { background: #1d4ed8; color: #fff; border: none; font-weight: 600; cursor: pointer; }
+    .card { background: #fff; border: 1px solid #dce3ec; border-radius: 10px; padding: 14px; }
+    .cond-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .alert-box { border-left: 4px solid #64748b; padding-left: 10px; }
+    .alert-box.high { border-left-color: #b4232c; }
+    .alert-box.caution { border-left-color: #d97706; }
+    .alert-box.low { border-left-color: #15803d; }
+    .risk-label { font-size: 19px; font-weight: 800; margin-bottom: 6px; }
+    .coverage { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+    .action-text, .reason-text { font-size: 13px; line-height: 1.4; margin: 6px 0 10px; }
+    .reasons-heading { font-size: 14px; font-weight: 700; margin: 10px 0 6px; }
+    .reasons-list { padding-left: 18px; margin: 0; }
+    .reasons-list li { margin-bottom: 10px; }
+    .claim { font-size: 13px; margin-bottom: 2px; }
+    .caveat { font-size: 11.5px; color: #526377; margin-bottom: 2px; }
+    .meta { font-size: 11px; color: #4a5c70; font-family: monospace; }
+    .footer-note { margin-top: 12px; font-size: 11.5px; color: #526377; line-height: 1.35; }
+  </style>
 </head>
 <body>
-  <div class="card">
-    <div class="header">
-      <span class="badge warning">HIGH RISK (85%)</span>
-      <h3>Phishing Detected</h3>
-    </div>
-    <p class="summary">This page displays indicators commonly associated with credential harvesting.</p>
-    
-    <div class="indicators">
-      <h4>Identified Indicators (Explainability):</h4>
-      <ul>
-        <li><strong>Domain Mismatch:</strong> Form posts to an external IP address.</li>
-        <li><strong>Typosquatting:</strong> Subtle character substitution detected in URL.</li>
-        <li><strong>Hidden Inputs:</strong> Concealed iframe overlay on login button.</li>
-      </ul>
-    </div>
-
-    <div class="actions">
-      <button class="btn danger">Leave Site</button>
-      <button class="btn secondary">Trust Domain</button>
-    </div>
+  <div class="toolbar">
+    <select id="modeSelect">
+      <option value="E">Condition E (Explanations)</option>
+      <option value="L">Condition L (Label Only)</option>
+    </select>
+    <button id="scanTabBtn">Scan Tab</button>
   </div>
+  <div id="popupOutput"></div>
+  <script type="module" src="popup.js"></script>
 </body>
 </html>

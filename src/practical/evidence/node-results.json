@@ -1,0 +1,67 @@
+{
+  "version": "0.1.0",
+  "passed": 15,
+  "total": 15,
+  "results": [
+    {
+      "test": "01. Benign HTTPS page without forms produces Low observed risk",
+      "status": "PASS"
+    },
+    {
+      "test": "02. Rule A3-R01 triggers High risk when password form submits to HTTP",
+      "status": "PASS"
+    },
+    {
+      "test": "03. Rule A3-R02 triggers Caution when password form hostname differs",
+      "status": "PASS"
+    },
+    {
+      "test": "04. Rule A3-R03 triggers Caution when visible URL link text differs from target host",
+      "status": "PASS"
+    },
+    {
+      "test": "05. Rule A3-R04 triggers High risk when HTTP page contains password input",
+      "status": "PASS"
+    },
+    {
+      "test": "06. Combined HTTP cross-host fixture triggers A3-R01, A3-R02, and A3-R04",
+      "status": "PASS"
+    },
+    {
+      "test": "07. Observation A3-O01 records hidden password form without raising risk alone",
+      "status": "PASS"
+    },
+    {
+      "test": "08. Exceeding 5,000 DOM elements produces Insufficient coverage",
+      "status": "PASS"
+    },
+    {
+      "test": "09. Unsupported chrome:// URL safely returns Unavailable state",
+      "status": "PASS"
+    },
+    {
+      "test": "10. Null or inaccessible DOM document returns Unavailable state",
+      "status": "PASS"
+    },
+    {
+      "test": "11. Condition E and Condition L share identical status, coverage, and action",
+      "status": "PASS"
+    },
+    {
+      "test": "12. Condition E renders Observed reasons and rule IDs while Condition L omits them",
+      "status": "PASS"
+    },
+    {
+      "test": "13. Privacy check: evidence output omits query strings, paths, and password values",
+      "status": "PASS"
+    },
+    {
+      "test": "14. Same-host HTTPS password form triggers Low observed risk",
+      "status": "PASS"
+    },
+    {
+      "test": "15. Non-URL link text does not falsely trigger A3-R03",
+      "status": "PASS"
+    }
+  ]
+}

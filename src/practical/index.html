@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phishing Indicator Detector v0.1.0 — Authorized Study Portal</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f1f5f9;
+      color: #1c2838;
+      margin: 0;
+      padding: 24px;
+    }
+
+    /* --- АВТОРИЗАЦИЯ (MODAL OVERLAY) --- */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .auth-overlay.hidden { display: none; }
+    .auth-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 14px;
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .auth-tab {
+      padding: 14px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #64748b;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .auth-tab.active {
+      background: #ffffff;
+      color: #1d4ed8;
+      border-bottom: 3px solid #1d4ed8;
+    }
+    .auth-body { padding: 24px; }
+    .auth-title { margin: 0 0 6px; font-size: 20px; font-weight: 800; color: #0f172a; }
+    .auth-sub { margin: 0 0 18px; font-size: 13px; color: #475569; line-height: 1.4; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #334155; }
+    .input-row { display: flex; gap: 8px; }
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+    }
+    .check-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12.5px;
+      color: #334155;
+      margin-bottom: 10px;
+      line-height: 1.35;
+      cursor: pointer;
+    }
+    .auth-error {
+      color: #b4232c;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    /* --- ШАПКА И СЕССИЯ --- */
+    .session-bar {
+      max-width: 1100px;
+      margin: 0 auto 14px;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 10px 20px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+    .badge-role {
+      background: #2563eb;
+      color: #fff;
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: 11.5px;
+      margin-right: 8px;
+    }
+    .header {
+      max-width: 1100px;
+      margin: 0 auto 20px;
+      background: #fff;
+      padding: 16px 24px;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    select, button {
+      padding: 9px 14px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+    }
+    button.primary {
+      background: #1d4ed8;
+      color: white;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.primary:hover { background: #1e40af; }
+    button.secondary {
+      background: #e2e8f0;
+      color: #1e293b;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.danger-btn {
+      background: #b4232c;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.safe-btn {
+      background: #15803d;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .fixture-preview {
+      max-width: 1100px;
+      margin: 0 auto 20px;
+      background: #fff;
+      padding: 16px 24px;
+      border-radius: 10px;
+      border: 1px dashed #94a3b8;
+    }
+    .decision-bar {
+      max-width: 1100px;
+      margin: 0 auto 20px;
+      background: #ffffff;
+      padding: 14px 24px;
+      border-radius: 10px;
+      border: 1px solid #dce3ec;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .grid {
+      max-width: 1100px;
+      margin: 0 auto 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .grid.single-col { grid-template-columns: 1fr; max-width: 640px; }
+    .card {
+      background: #ffffff;
+      border: 1px solid #dce3ec;
+      border-radius: 12px;
+      padding: 22px;
+    }
+    .cond-title { font-size: 20px; font-weight: 700; color: #162436; margin-bottom: 18px; }
+    .alert-box { border-left: 5px solid #b4232c; padding-left: 14px; }
+    .alert-box.high { border-left-color: #b4232c; }
+    .alert-box.caution { border-left-color: #d97706; }
+    .alert-box.low { border-left-color: #15803d; }
+    .alert-box.unavailable { border-left-color: #64748b; }
+    .risk-label { font-size: 24px; font-weight: 800; color: #162436; margin-bottom: 10px; }
+    .coverage { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+    .action-text, .reason-text { font-size: 15px; line-height: 1.45; color: #243447; margin: 10px 0 16px; }
+    .reasons-heading { font-size: 17px; font-weight: 700; margin: 16px 0 10px; }
+    .reasons-list { margin: 0; padding-left: 20px; }
+    .reasons-list li { margin-bottom: 14px; }
+    .claim { font-size: 15px; color: #1c2838; line-height: 1.4; margin-bottom: 4px; }
+    .caveat { font-size: 13px; color: #526377; line-height: 1.4; margin-bottom: 4px; }
+    .meta { font-size: 12.5px; color: #4a5c70; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .footer-note { margin-top: 18px; font-size: 13px; color: #526377; line-height: 1.4; }
+
+    /* --- ЖУРНАЛ СЕССИИ --- */
+    .log-panel {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 18px 24px;
+      border-radius: 10px;
+      border: 1px solid #dce3ec;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+    th, td { border-bottom: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; }
+    th { background: #f8fafc; color: #475569; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ -->
+  <div class="auth-overlay" id="authModal">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabParticipant">Participant Session Auth</button>
+        <button class="auth-tab" id="tabResearcher">Researcher Console</button>
+      </div>
+
+      <!-- Вкладка 1: Авторизация участника исследования (Appendix C) -->
+      <div class="auth-body" id="formParticipant">
+        <h2 class="auth-title">Study Session Authorization</h2>
+        <p class="auth-sub">Astana IT University · Pseudonymous E/L Classification Protocol (v1.0). No personal names or real passwords are collected.</p>
+        <div class="auth-error" id="partError">Please enter a Participant Code and confirm both consent boxes.</div>
+
+        <div class="form-group">
+          <label>Pseudonymous Participant ID</label>
+          <div class="input-row">
+            <input type="text" id="partIdInput" class="form-control" placeholder="e.g. P-4829" value="P-4821">
+            <button type="button" class="secondary" id="genCodeBtn">Generate</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Prior Security Training</label>
+          <select id="trainingSelect" class="form-control">
+            <option value="no">No prior formal security training</option>
+            <option value="yes">Yes (completed cybersecurity course/training)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Desktop Browser Familiarity</label>
+          <select id="familiaritySelect" class="form-control">
+            <option value="daily">Daily user</option>
+            <option value="weekly">Weekly user</option>
+            <option value="rarely">Rarely</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Concealed Condition Allocation</label>
+          <select id="allocSelect" class="form-control">
+            <option value="random">Concealed Random Permutation (Auto E / L)</option>
+            <option value="E">Force Condition E (Explanation Mode)</option>
+            <option value="L">Force Condition L (Label-Only Mode)</option>
+          </select>
+        </div>
+
+        <label class="check-label">
+          <input type="checkbox" id="consentAge" checked>
+          <span>I confirm that I am an undergraduate student aged 18 or older.</span>
+        </label>
+        <label class="check-label">
+          <input type="checkbox" id="consentVoluntary" checked>
+          <span>I understand participation is voluntary and agree to pseudonymous task logging (withdrawal available for 14 days).</span>
+        </label>
+
+        <button type="button" class="primary" style="width:100%; margin-top:8px; padding:11px;" id="startPartBtn">
+          Authorize & Start Assigned Session
+        </button>
+      </div>
+
+      <!-- Вкладка 2: Вход для исследователей (Инаятулла / Нуртилек / Руководитель) -->
+      <div class="auth-body" id="formResearcher" style="display:none;">
+        <h2 class="auth-title">Researcher & Supervisor Login</h2>
+        <p class="auth-sub">Unlocks side-by-side Condition E & Condition L comparison view and telemetry export.</p>
+        <div class="auth-error" id="resError">Invalid researcher access key. Use: AITU-2026</div>
+
+        <div class="form-group">
+          <label>Researcher Name / Role</label>
+          <select id="resNameSelect" class="form-control">
+            <option value="Inayatulla Noyan (Researcher)">Inayatulla Noyan (Researcher)</option>
+            <option value="Nurtilek Koblandy (Researcher)">Nurtilek Koblandy (Researcher)</option>
+            <option value="Aitynbek Seitenov (Supervisor)">Aitynbek Seitenov (Supervisor)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Supervisor / Lab Access Key</label>
+          <input type="password" id="resKeyInput" class="form-control" value="AITU-2026" placeholder="Enter access key">
+          <small style="color:#64748b; font-size:11.5px;">Default key for defense demo: <code>AITU-2026</code></small>
+        </div>
+
+        <button type="button" class="primary" style="width:100%; margin-top:8px; padding:11px;" id="startResBtn">
+          Authorize Researcher Console (E + L Side-by-Side)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ВЕРХНЯЯ ПАНЕЛЬ АВТОРИЗОВАННОЙ СЕССИИ -->
+  <div class="session-bar">
+    <div>
+      <span class="badge-role" id="sessionRoleBadge">RESEARCHER</span>
+      <span id="sessionInfoText">Not authorized</span>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span id="withdrawalDisplay" style="color:#94a3b8; font-family:monospace;"></span>
+      <button type="button" class="secondary" style="padding:5px 10px; font-size:12px;" id="logoutBtn">Switch User / Logout</button>
+    </div>
+  </div>
+
+  <!-- ПАНЕЛЬ УПРАВЛЕНИЯ ФИКСТУРАМИ -->
+  <div class="header">
+    <div>
+      <strong>Local Detector Testbed (v0.1.0)</strong> — Shared Collector & Policy Engine
+    </div>
+    <div class="controls">
+      <label for="fixtureSelect">Fixture:</label>
+      <select id="fixtureSelect">
+        <option value="http_cross_host">1. HTTP + Cross-Host Password Form (Triggers A3-R01, A3-R02, A3-R04)</option>
+        <option value="sso_caution">2. HTTPS External Identity Provider / SSO (Triggers A3-R02 Caution)</option>
+        <option value="misleading_link">3. Misleading Visible URL Link (Triggers A3-R03 Caution)</option>
+        <option value="js_limitation">4. Limitation Case: JS addEventListener Submit (Low Observed Risk)</option>
+        <option value="unavailable_state">5. Unavailable / Unsupported Document State</option>
+      </select>
+      <button class="primary" id="scanBtn">Scan Fixture</button>
+    </div>
+  </div>
+
+  <!-- КОНТЕЙНЕР ИССЛЕДУЕМОЙ СТРАНИЦЫ -->
+  <div class="fixture-preview">
+    <strong>Simulated Target DOM Container (<span id="virtualUrlDisplay"></span>):</strong>
+    <div id="sandboxDom" style="margin-top:10px; padding:10px; background:#f8fafc; border-radius:6px;"></div>
+  </div>
+
+  <!-- ПАНЕЛЬ ПРИНЯТИЯ РЕШЕНИЯ УЧАСТНИКОМ (ЗАПИСЬ В ЛОГ) -->
+  <div class="decision-bar">
+    <div>
+      <strong>Participant Classification Decision:</strong>
+      <span style="font-size:13px; color:#475569; margin-left:6px;">
+        Timer started on render (<span id="liveTimer">0</span> ms elapsed)
+      </span>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="danger-btn" id="btnClassifyPhish">Classify as Phishing</button>
+      <button class="safe-btn" id="btnClassifyLegit">Classify as Legitimate</button>
+    </div>
+  </div>
+
+  <!-- КАРТОЧКИ CONDITION E / CONDITION L -->
+  <div class="grid" id="outputGrid"></div>
+
+  <!-- ТАБЛИЦА ЛОГОВ СЕССИИ (КАК В APPENDIX C) -->
+  <div class="log-panel">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <strong>Session Task Log (Appendix C Schema — Local Memory Only)</strong>
+      <button class="secondary" style="padding:5px 10px; font-size:12px;" id="exportJsonBtn">Export Session JSON</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>participant_id</th>
+          <th>condition</th>
+          <th>page_id (truth)</th>
+          <th>response</th>
+          <th>elapsed_ms</th>
+          <th>status</th>
+        </tr>
+      </thead>
+      <tbody id="logTableBody">
+        <tr><td colspan="6" style="color:#64748b;">No decisions recorded in this session yet. Click "Classify as Phishing" or "Classify as Legitimate" above.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script type="module">
+    import { collectAndEvaluate, renderCard } from './detector.js';
+
+    // Состояние авторизации
+    let currentSession = {
+      role: 'RESEARCHER', // 'PARTICIPANT' или 'RESEARCHER'
+      id: 'Inayatulla Noyan (Researcher)',
+      condition: 'BOTH', // 'E', 'L' или 'BOTH'
+      withdrawalCode: 'WD-ADMIN',
+      training: 'yes',
+      familiarity: 'daily'
+    };
+
+    const fixtures = {
+      http_cross_host: {
+        id: 'fix-01',
+        truth: 'phishing',
+        url: 'http://127.0.0.1:4173/demo/index.html',
+        html: `
+          <form action="http://fixture.test/login" method="POST">
+            <label>Account Email: <input type="email" name="user" value="student@astanait.edu.kz"></label>
+            <label>Password: <input type="password" name="pass" value="secret123"></label>
+            <button type="button">Sign In</button>
+          </form>`
+      },
+      sso_caution: {
+        id: 'fix-02',
+        truth: 'legitimate',
+        url: 'https://portal.university.edu/login',
+        html: `
+          <form action="https://sso.identity-provider.org/auth" method="POST">
+            <label>SSO Password: <input type="password" name="pass"></label>
+            <button type="button">Login via SSO</button>
+          </form>`
+      },
+      misleading_link: {
+        id: 'fix-03',
+        truth: 'phishing',
+        url: 'https://mail.university.edu/inbox',
+        html: `
+          <p>Please verify your account at 
+            <a href="https://account-verify-security.com/login">https://astanait.edu.kz/login</a>
+          </p>`
+      },
+      js_limitation: {
+        id: 'fix-04',
+        truth: 'phishing',
+        url: 'https://secure.service.org/login',
+        html: `
+          <form id="jsForm" action="https://secure.service.org/auth" method="POST">
+            <label>Password: <input type="password" name="pass"></label>
+            <button type="button">Sign In (JS Intercepted)</button>
+          </form>`
+      },
+      unavailable_state: {
+        id: 'fix-05',
+        truth: 'unknown',
+        url: 'chrome://extensions',
+        html: `<em>Restricted browser page — DOM cannot be inspected.</em>`
+      }
+    };
+
+    const authModal = document.getElementById('authModal');
+    const tabParticipant = document.getElementById('tabParticipant');
+    const tabResearcher = document.getElementById('tabResearcher');
+    const formParticipant = document.getElementById('formParticipant');
+    const formResearcher = document.getElementById('formResearcher');
+
+    const selectEl = document.getElementById('fixtureSelect');
+    const sandboxEl = document.getElementById('sandboxDom');
+    const urlDisplay = document.getElementById('virtualUrlDisplay');
+    const outputGrid = document.getElementById('outputGrid');
+    const logTableBody = document.getElementById('logTableBody');
+    const liveTimerEl = document.getElementById('liveTimer');
+
+    let trialStartTime = performance.now();
+    let sessionLogs = [];
+
+    // Таймер времени реакции
+    setInterval(() => {
+      const elapsed = Math.round(performance.now() - trialStartTime);
+      liveTimerEl.textContent = elapsed;
+    }, 100);
+
+    // Переключение вкладок в окне авторизации
+    tabParticipant.addEventListener('click', () => {
+      tabParticipant.classList.add('active');
+      tabResearcher.classList.remove('active');
+      formParticipant.style.display = 'block';
+      formResearcher.style.display = 'none';
+    });
+
+    tabResearcher.addEventListener('click', () => {
+      tabResearcher.classList.add('active');
+      tabParticipant.classList.remove('active');
+      formResearcher.style.display = 'block';
+      formParticipant.style.display = 'none';
+    });
+
+    // Генератор случайного кода участника
+    document.getElementById('genCodeBtn').addEventListener('click', () => {
+      const rand = Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('partIdInput').value = `P-${rand}`;
+    });
+
+    // Вход как участник эксперимента
+    document.getElementById('startPartBtn').addEventListener('click', () => {
+      const partId = document.getElementById('partIdInput').value.trim();
+      const ageOk = document.getElementById('consentAge').checked;
+      const volOk = document.getElementById('consentVoluntary').checked;
+      const errEl = document.getElementById('partError');
+
+      if (!partId || !ageOk || !volOk) {
+        errEl.style.display = 'block';
+        return;
+      }
+      errEl.style.display = 'none';
+
+      const allocChoice = document.getElementById('allocSelect').value;
+      const assignedCond = allocChoice === 'random' ? (Math.random() < 0.5 ? 'E' : 'L') : allocChoice;
+      const wdCode = 'WD-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+
+      currentSession = {
+        role: 'PARTICIPANT',
+        id: partId,
+        condition: assignedCond,
+        withdrawalCode: wdCode,
+        training: document.getElementById('trainingSelect').value,
+        familiarity: document.getElementById('familiaritySelect').value
+      };
+
+      applySessionUI();
+      authModal.classList.add('hidden');
+      runScan();
+    });
+
+    // Вход как исследователь (по ключу AITU-2026)
+    document.getElementById('startResBtn').addEventListener('click', () => {
+      const key = document.getElementById('resKeyInput').value.trim();
+      const errEl = document.getElementById('resError');
+      if (key !== 'AITU-2026') {
+        errEl.style.display = 'block';
+        return;
+      }
+      errEl.style.display = 'none';
+
+      currentSession = {
+        role: 'RESEARCHER',
+        id: document.getElementById('resNameSelect').value,
+        condition: 'BOTH',
+        withdrawalCode: 'ADMIN-MODE',
+        training: 'yes',
+        familiarity: 'daily'
+      };
+
+      applySessionUI();
+      authModal.classList.add('hidden');
+      runScan();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      authModal.classList.remove('hidden');
+    });
+
+    function applySessionUI() {
+      document.getElementById('sessionRoleBadge').textContent = currentSession.role;
+      document.getElementById('sessionRoleBadge').style.background =
+        currentSession.role === 'RESEARCHER' ? '#2563eb' : '#059669';
+
+      const condText = currentSession.condition === 'BOTH'
+        ? 'Side-by-Side Comparison (E + L)'
+        : `Assigned Condition ${currentSession.condition} (Fixed per participant)`;
+
+      document.getElementById('sessionInfoText').textContent =
+        `${currentSession.id} · Mode: ${condText}`;
+      document.getElementById('withdrawalDisplay').textContent =
+        `Withdrawal Code: ${currentSession.withdrawalCode}`;
+    }
+
+    function runScan() {
+      const key = selectEl.value;
+      const fix = fixtures[key];
+      urlDisplay.textContent = fix.url;
+      sandboxEl.innerHTML = fix.html;
+
+      if (key === 'js_limitation') {
+        const f = sandboxEl.querySelector('#jsForm');
+        if (f) f.addEventListener('submit', (e) => e.preventDefault());
+      }
+
+      const result = collectAndEvaluate(
+        key === 'unavailable_state' ? null : sandboxEl,
+        fix.url
+      );
+
+      if (currentSession.condition === 'E') {
+        outputGrid.classList.add('single-col');
+        outputGrid.innerHTML = renderCard('E', result);
+      } else if (currentSession.condition === 'L') {
+        outputGrid.classList.add('single-col');
+        outputGrid.innerHTML = renderCard('L', result);
+      } else {
+        outputGrid.classList.remove('single-col');
+        outputGrid.innerHTML = renderCard('E', result) + renderCard('L', result);
+      }
+
+      trialStartTime = performance.now();
+    }
+
+    function recordDecision(decision) {
+      const key = selectEl.value;
+      const fix = fixtures[key];
+      const elapsed = Math.round(performance.now() - trialStartTime);
+      const isCorrect = fix.truth === decision;
+
+      const entry = {
+        participant_id: currentSession.id,
+        condition: currentSession.condition,
+        page_id: `${fix.id} (${fix.truth})`,
+        response: decision,
+        elapsed_ms: elapsed,
+        outcome: fix.truth === 'unknown' ? 'N/A' : (isCorrect ? 'Correct' : 'Error'),
+        version: '0.1.0'
+      };
+      sessionLogs.push(entry);
+
+      logTableBody.innerHTML = sessionLogs.map(r => `
+        <tr>
+          <td><code>${r.participant_id}</code></td>
+          <td><strong>${r.condition}</strong></td>
+          <td>${r.page_id}</td>
+          <td>${r.response}</td>
+          <td>${r.elapsed_ms} ms</td>
+          <td style="font-weight:700; color:${r.outcome === 'Correct' ? '#15803d' : '#b4232c'};">${r.outcome}</td>
+        </tr>
+      `).join('');
+
+      trialStartTime = performance.now();
+    }
+
+    document.getElementById('btnClassifyPhish').addEventListener('click', () => recordDecision('phishing'));
+    document.getElementById('btnClassifyLegit').addEventListener('click', () => recordDecision('legitimate'));
+
+    document.getElementById('exportJsonBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(sessionLogs, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `task-log-${Date.now()}.json`;
+      a.click();
+    });
+
+    document.getElementById('scanBtn').addEventListener('click', runScan);
+    selectEl.addEventListener('change', runScan);
+
+    applySessionUI();
+    runScan();
+  </script>
+</body>
+</html>
